@@ -1,5 +1,5 @@
 import postgres from "postgres";
-import {
+import type {
 	CustomerField,
 	CustomersTableType,
 	InvoiceForm,
