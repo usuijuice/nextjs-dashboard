@@ -6,7 +6,7 @@ import {
 	KeyIcon,
 } from "@heroicons/react/24/outline";
 import { useSearchParams } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useId } from "react";
 import { authenticate } from "@/app/lib/actions";
 import { Button } from "@/app/ui/button";
 
@@ -37,7 +37,7 @@ export default function LoginForm() {
 						<div className="relative">
 							<input
 								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-								id="email"
+								id={useId()}
 								type="email"
 								name="email"
 								placeholder="Enter your email address"
@@ -56,7 +56,7 @@ export default function LoginForm() {
 						<div className="relative">
 							<input
 								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-								id="password"
+								id={useId()}
 								type="password"
 								name="password"
 								placeholder="Enter password"

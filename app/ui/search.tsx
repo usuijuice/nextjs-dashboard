@@ -2,6 +2,7 @@
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useId } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 export default function Search({ placeholder }: { placeholder: string }) {
@@ -27,7 +28,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
 			</label>
 			<input
 				className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-				id="search"
+				id={useId()}
 				placeholder={placeholder}
 				onChange={(e) => {
 					handleSearch(e.target.value);
