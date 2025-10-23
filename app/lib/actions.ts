@@ -8,13 +8,13 @@ import { z } from "zod";
 const sql = postgres(process.env.POSTGRES_URL ?? "", { ssl: "require" });
 
 const FormSchema = z.object({
-	id: z.string({ invalid_type_error: "Please select a customer." }),
+	id: z.string({ error: "Please select a customer." }),
 	customerId: z.string(),
 	amount: z.coerce
 		.number()
 		.gt(0, { message: "Please enter an amount greater than $0." }),
 	status: z.enum(["pending", "paid"], {
-		invalid_type_error: "Please select an invoice status.",
+		error: "Please select an invoice status.",
 	}),
 	date: z.string(),
 });
