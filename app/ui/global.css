@@ -1,4 +1,5 @@
 @import "tailwindcss";
+/* biome-ignore lint/suspicious/noUnknownAtRules: false positive */
 @plugin "@tailwindcss/forms";
 
 input[type="number"] {

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import postgres from "postgres";
 import { z } from "zod";
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
+const sql = postgres(process.env.POSTGRES_URL ?? "", { ssl: "require" });
 
 const FormSchema = z.object({
 	id: z.string(),
