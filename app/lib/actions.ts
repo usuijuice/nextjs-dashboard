@@ -1,13 +1,11 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { AuthError } from "next-auth";
-import postgres from "postgres";
 import { z } from "zod";
-import { signIn } from "@/auth";
-
-const sql = postgres(process.env.POSTGRES_URL ?? "", { ssl: "require" });
+import { db } from "@/app/db";
+import { invoices } from "@/app/db/schema";
 
 const FormSchema = z.object({
 	id: z.string({ error: "Please select a customer." }),
@@ -52,10 +50,12 @@ export async function createInvoice(_prevState: State, formData: FormData) {
 	const date = new Date().toISOString().split("T")[0];
 
 	try {
-		await sql`
-      INSERT INTO invoices (customer_id, amount, status, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-    `;
+		await db.insert(invoices).values({
+			customerId,
+			amount: amountInCents,
+			status,
+			date,
+		});
 	} catch (error) {
 		// We'll also log the error to the console for now
 		console.error(error);
@@ -91,11 +91,14 @@ export async function updateInvoice(
 	const amountInCents = amount * 100;
 
 	try {
-		await sql`
-        UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-        WHERE id = ${id}
-      `;
+		await db
+			.update(invoices)
+			.set({
+				customerId,
+				amount: amountInCents,
+				status,
+			})
+			.where(eq(invoices.id, id));
 	} catch (error) {
 		// We'll also log the error to the console for now
 		console.error(error);
@@ -108,27 +111,8 @@ export async function updateInvoice(
 }
 
 export async function deleteInvoice(id: string) {
-	await sql`DELETE FROM invoices WHERE id = ${id}`;
+	await db.delete(invoices).where(eq(invoices.id, id));
 
 	revalidatePath("/dashboard");
 	revalidatePath("/dashboard/invoices");
-}
-
-export async function authenticate(
-	_prevState: string | undefined,
-	formData: FormData,
-) {
-	try {
-		await signIn("credentials", formData);
-	} catch (error) {
-		if (error instanceof AuthError) {
-			switch (error.type) {
-				case "CredentialsSignin":
-					return "Invalid credentials.";
-				default:
-					return "Something went wrong.";
-			}
-		}
-		throw error;
-	}
 }
