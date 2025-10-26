@@ -1,4 +1,4 @@
-import { asc, count, desc, eq, like, or, sql } from "drizzle-orm";
+import { asc, count, desc, eq, like, or } from "drizzle-orm";
 import { db } from "@/app/db";
 import { customers, invoices, revenue } from "@/app/db/schema";
 import type { InvoiceForm } from "./definitions";
@@ -43,23 +43,34 @@ export async function fetchCardData() {
 	try {
 		const invoiceCountPromise = db.select({ count: count() }).from(invoices);
 		const customerCountPromise = db.select({ count: count() }).from(customers);
-		const invoiceStatusPromise = db
-			.select({
-				paid: sql<number>`sum(case when ${invoices.status} = 'paid' then ${invoices.amount} else 0 end)`,
-				pending: sql<number>`sum(case when ${invoices.status} = 'pending' then ${invoices.amount} else 0 end)`,
-			})
+		const invoicesTotalsPromise = db
+			.select({ amount: invoices.amount, status: invoices.status })
 			.from(invoices);
 
-		const data = await Promise.all([
-			invoiceCountPromise,
-			customerCountPromise,
-			invoiceStatusPromise,
-		]);
+		const [invoiceCountRows, customerCountRows, invoiceTotalsRows] =
+			await Promise.all([
+				invoiceCountPromise,
+				customerCountPromise,
+				invoicesTotalsPromise,
+			]);
 
-		const numberOfInvoices = Number(data[0][0].count ?? "0");
-		const numberOfCustomers = Number(data[1][0].count ?? "0");
-		const totalPaidInvoices = formatCurrency(data[2][0].paid ?? "0");
-		const totalPendingInvoices = formatCurrency(data[2][0].pending ?? "0");
+		const numberOfInvoices = Number(invoiceCountRows[0]?.count ?? 0);
+		const numberOfCustomers = Number(customerCountRows[0]?.count ?? 0);
+
+		const totals = invoiceTotalsRows.reduce(
+			(acc, invoice) => {
+				if (invoice.status === "paid") {
+					acc.paid += invoice.amount;
+				} else if (invoice.status === "pending") {
+					acc.pending += invoice.amount;
+				}
+				return acc;
+			},
+			{ paid: 0, pending: 0 },
+		);
+
+		const totalPaidInvoices = formatCurrency(totals.paid);
+		const totalPendingInvoices = formatCurrency(totals.pending);
 
 		return {
 			numberOfCustomers,
