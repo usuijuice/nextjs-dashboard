@@ -168,16 +168,33 @@ export async function fetchInvoiceById(id: string) {
 }
 
 export async function fetchCustomers() {
-	try {
-		return await db
-			.select({
-				id: customers.id,
-				name: customers.name,
-			})
-			.from(customers)
-			.orderBy(asc(customers.name));
-	} catch (err) {
-		console.error("Database Error:", err);
-		throw new Error("Failed to fetch all customers.");
-	}
+        try {
+                return await db
+                        .select({
+                                id: customers.id,
+                                name: customers.name,
+                        })
+                        .from(customers)
+                        .orderBy(asc(customers.name));
+        } catch (err) {
+                console.error("Database Error:", err);
+                throw new Error("Failed to fetch all customers.");
+        }
+}
+
+export async function fetchCustomersList() {
+        try {
+                return await db
+                        .select({
+                                id: customers.id,
+                                name: customers.name,
+                                email: customers.email,
+                                image_url: customers.imageUrl,
+                        })
+                        .from(customers)
+                        .orderBy(asc(customers.name));
+        } catch (err) {
+                console.error("Database Error:", err);
+                throw new Error("Failed to fetch customer list.");
+        }
 }
