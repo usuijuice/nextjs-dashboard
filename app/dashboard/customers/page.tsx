@@ -14,66 +14,104 @@ export default async function Page() {
 	return (
 		<div className="w-full">
 			<h1 className={`${lusitana.className} text-2xl`}>Customers</h1>
-			<div className="mt-6 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
-						<tr>
-							<th
-								scope="col"
-								className="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-							>
-								Customer
-							</th>
-							<th
-								scope="col"
-								className="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-							>
-								Email
-							</th>
-							<th
-								scope="col"
-								className="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-							>
-								Total Invoices
-							</th>
-						</tr>
-					</thead>
-					<tbody className="divide-y divide-gray-200 bg-white">
-						{customers.length === 0 ? (
-							<tr>
-								<td
-									className="px-6 py-10 text-center text-sm text-gray-500"
-									colSpan={3}
-								>
+			<div className="mt-6 flow-root">
+				<div className="inline-block min-w-full align-middle">
+					<div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+						{/* Mobile view */}
+						<div className="md:hidden">
+							{customers.length === 0 ? (
+								<div className="rounded-md bg-white p-4 text-center text-sm text-gray-500">
 									No customers found.
-								</td>
-							</tr>
-						) : (
-							customers.map((customer) => (
-								<tr key={customer.id}>
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-										<div className="flex items-center gap-3">
-											<Image
-												src={customer.image_url}
-												alt={`${customer.name}'s profile picture`}
-												className="h-10 w-10 rounded-full"
-												width={40}
-												height={40}
-											/>
-											<span className="font-semibold">{customer.name}</span>
+								</div>
+							) : (
+								customers.map((customer) => (
+									<div
+										key={customer.id}
+										className="mb-2 w-full rounded-md bg-white p-4"
+									>
+										<div className="flex items-center justify-between border-b pb-4">
+											<div className="flex items-center gap-3">
+												<Image
+													src={customer.image_url}
+													alt={`${customer.name}'s profile picture`}
+													className="h-10 w-10 rounded-full"
+													width={40}
+													height={40}
+												/>
+												<div>
+													<p className="font-semibold">{customer.name}</p>
+													<p className="text-sm text-gray-500">
+														{customer.email}
+													</p>
+												</div>
+											</div>
 										</div>
-									</td>
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-										{customer.email}
-									</td>
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-										{formatCurrency(Number(customer.total_invoices) || 0)}
-									</td>
+										<div className="pt-4">
+											<p className="text-sm text-gray-500">Total Invoices</p>
+											<p className="text-xl font-medium">
+												{formatCurrency(Number(customer.total_invoices) || 0)}
+											</p>
+										</div>
+									</div>
+								))
+							)}
+						</div>
+						{/* Desktop view */}
+						<table className="hidden min-w-full text-gray-900 md:table">
+							<thead className="rounded-lg text-left text-sm font-normal">
+								<tr>
+									<th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+										Customer
+									</th>
+									<th scope="col" className="px-3 py-5 font-medium">
+										Email
+									</th>
+									<th scope="col" className="px-3 py-5 font-medium">
+										Total Invoices
+									</th>
 								</tr>
-							))
-						)}
-					</tbody>
-				</table>
+							</thead>
+							<tbody className="bg-white">
+								{customers.length === 0 ? (
+									<tr>
+										<td
+											className="px-6 py-10 text-center text-sm text-gray-500"
+											colSpan={3}
+										>
+											No customers found.
+										</td>
+									</tr>
+								) : (
+									customers.map((customer) => (
+										<tr
+											key={customer.id}
+											className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+										>
+											<td className="whitespace-nowrap py-3 pl-6 pr-3">
+												<div className="flex items-center gap-3">
+													<Image
+														src={customer.image_url}
+														alt={`${customer.name}'s profile picture`}
+														className="rounded-full"
+														width={28}
+														height={28}
+													/>
+													<p>{customer.name}</p>
+												</div>
+											</td>
+											<td className="whitespace-nowrap px-3 py-3">
+												{customer.email}
+											</td>
+											<td className="whitespace-nowrap px-3 py-3">
+												{formatCurrency(Number(customer.total_invoices) || 0)}
+											</td>
+										</tr>
+									))
+								)}
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
