@@ -66,6 +66,7 @@ export async function createInvoice(_prevState: State, formData: FormData) {
 
 	revalidatePath("/dashboard");
 	revalidatePath("/dashboard/invoices");
+	revalidatePath("/dashboard/customers");
 	redirect("/dashboard/invoices");
 }
 
@@ -107,6 +108,7 @@ export async function updateInvoice(
 
 	revalidatePath("/dashboard");
 	revalidatePath("/dashboard/invoices");
+	revalidatePath("/dashboard/customers");
 	redirect("/dashboard/invoices");
 }
 
@@ -115,4 +117,5 @@ export async function deleteInvoice(id: string) {
 
 	revalidatePath("/dashboard");
 	revalidatePath("/dashboard/invoices");
+	revalidatePath("/dashboard/customers");
 }
