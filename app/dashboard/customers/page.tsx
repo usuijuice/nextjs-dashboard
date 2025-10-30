@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { fetchCustomersList } from "@/app/lib/data";
+import { fetchCustomersListWithInvoices } from "@/app/lib/data";
+import { formatCurrency } from "@/app/lib/utils";
 import { lusitana } from "@/app/ui/fonts";
 
 export const metadata: Metadata = {
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-        const customers = await fetchCustomersList();
+        const customers = await fetchCustomersListWithInvoices();
 
         return (
                 <div className="w-full">
@@ -29,6 +30,12 @@ export default async function Page() {
                                                         >
                                                                 Email
                                                         </th>
+                                                        <th
+                                                                scope="col"
+                                                                className="px-6 py-3 text-left text-sm font-semibold text-gray-700"
+                                                        >
+                                                                Total Invoices
+                                                        </th>
                                                 </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
@@ -36,7 +43,7 @@ export default async function Page() {
                                                         <tr>
                                                                 <td
                                                                         className="px-6 py-10 text-center text-sm text-gray-500"
-                                                                        colSpan={2}
+                                                                        colSpan={3}
                                                                 >
                                                                         No customers found.
                                                                 </td>
@@ -60,6 +67,9 @@ export default async function Page() {
                                                                         </td>
                                                                         <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                                                 {customer.email}
+                                                                        </td>
+                                                                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                                                                                {formatCurrency(Number(customer.total_invoices) || 0)}
                                                                         </td>
                                                                 </tr>
                                                         ))

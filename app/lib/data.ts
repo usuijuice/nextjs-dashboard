@@ -1,4 +1,4 @@
-import { asc, count, desc, eq, like, or } from "drizzle-orm";
+import { asc, count, desc, eq, like, or, sum } from "drizzle-orm";
 import { db } from "@/app/db";
 import { customers, invoices, revenue } from "@/app/db/schema";
 import type { InvoiceForm } from "./definitions";
@@ -196,5 +196,25 @@ export async function fetchCustomersList() {
         } catch (err) {
                 console.error("Database Error:", err);
                 throw new Error("Failed to fetch customer list.");
+        }
+}
+
+export async function fetchCustomersListWithInvoices() {
+        try {
+                return await db
+                        .select({
+                                id: customers.id,
+                                name: customers.name,
+                                email: customers.email,
+                                image_url: customers.imageUrl,
+                                total_invoices: sum(invoices.amount),
+                        })
+                        .from(customers)
+                        .leftJoin(invoices, eq(customers.id, invoices.customerId))
+                        .groupBy(customers.id, customers.name, customers.email, customers.imageUrl)
+                        .orderBy(asc(customers.name));
+        } catch (err) {
+                console.error("Database Error:", err);
+                throw new Error("Failed to fetch customer list with invoices.");
         }
 }
