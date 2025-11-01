@@ -8,11 +8,12 @@ export default function ThemeToggle() {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		setMounted(true);
-		const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-		if (savedTheme) {
+		const savedTheme = localStorage.getItem("theme");
+		if (savedTheme === "light" || savedTheme === "dark") {
 			setTheme(savedTheme);
+			document.documentElement.classList.toggle("dark", savedTheme === "dark");
 		}
+		setMounted(true);
 	}, []);
 
 	const toggleTheme = () => {
@@ -24,9 +25,9 @@ export default function ThemeToggle() {
 
 	if (!mounted) {
 		return (
-			<div className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium md:flex-none md:justify-start md:p-2 md:px-3">
-				<MoonIcon className="w-6" />
-				<div className="hidden md:block">Dark Mode</div>
+			<div className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium dark:bg-gray-800 md:flex-none md:justify-start md:p-2 md:px-3">
+				<div className="w-6" />
+				<div className="hidden md:block" />
 			</div>
 		);
 	}
